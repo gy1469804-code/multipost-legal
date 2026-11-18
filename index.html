@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MultiPost Studio — Schedule &amp; Publish Videos to Multiple TikTok Accounts</title>
+<meta name="description" content="MultiPost Studio is a web-based tool for creator teams and agencies to manage multiple TikTok accounts, upload videos once, and publish on schedule using TikTok's official Content Posting API.">
+<meta property="og:title" content="MultiPost Studio — Multi-account TikTok publishing">
+<meta property="og:description" content="Manage multiple TikTok accounts, schedule posts to the minute, and track publishing status — powered by TikTok's official Content Posting API.">
+<meta property="og:image" content="/assets/icon-512.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/icon-64.png">
+<link rel="apple-touch-icon" href="/assets/icon-180.png">
+<style>
+  :root {
+    --bg:#f7f8fa; --card:#fff; --text:#1a1d24; --muted:#5b6472; --line:#e5e7eb;
+    --brand:#25d2ee; --brand-deep:#0b7285; --brand-soft:rgba(37,210,238,.12);
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--text); line-height:1.7;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; }
+  a { color:var(--brand-deep); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .wrap { max-width:1040px; margin:0 auto; padding:0 24px; }
+
+  /* nav */
+  header { position:sticky; top:0; z-index:10; background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line); }
+  nav { display:flex; align-items:center; gap:28px; height:60px; }
+  .logo { display:flex; align-items:center; gap:10px; font-weight:700; font-size:17px; color:var(--text); }
+  .logo img { width:30px; height:30px; border-radius:8px; display:block; }
+  nav .links { margin-left:auto; display:flex; gap:22px; font-size:14px; }
+  nav .links a { color:var(--muted); }
+  nav .links a:hover { color:var(--text); text-decoration:none; }
+  nav .btn-nav { background:linear-gradient(135deg,#2bd9f0,#0b7285); color:#fff;
+    padding:7px 16px; border-radius:8px; font-weight:600; }
+  nav .btn-nav:hover { color:#fff; text-decoration:none; opacity:.92; }
+  @media (max-width:720px){ nav .links { display:none; } }
+
+  /* hero */
+  .hero { padding:72px 0 56px; text-align:center;
+    background:linear-gradient(180deg, rgba(37,210,238,.10), rgba(37,210,238,0)); }
+  .badge { display:inline-block; background:var(--brand-soft); color:var(--brand-deep);
+    border-radius:999px; padding:3px 14px; font-size:13px; margin-bottom:18px; }
+  .hero h1 { font-size:38px; line-height:1.25; margin:0 0 14px; }
+  .hero p.sub { color:var(--muted); font-size:17px; max-width:640px; margin:0 auto 30px; }
+  .cta { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .btn { display:inline-block; padding:11px 26px; border-radius:10px; font-size:15px; font-weight:600; }
+  .btn.primary { background:linear-gradient(135deg,#2bd9f0,#0b7285); color:#fff; }
+  .btn.primary:hover { text-decoration:none; opacity:.92; }
+  .btn.ghost { border:1px solid var(--line); background:#fff; color:var(--text); }
+  .btn.ghost:hover { text-decoration:none; border-color:#c9ced6; }
+  .hero .meta { margin-top:26px; color:var(--muted); font-size:13px; }
+  .hero .meta span { margin:0 10px; }
+
+  /* sections */
+  section { padding:56px 0; }
+  section.alt { background:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  h2 { font-size:26px; margin:0 0 8px; text-align:center; }
+  .lead { color:var(--muted); text-align:center; max-width:620px; margin:0 auto 36px; font-size:15px; }
+
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  @media (max-width:860px){ .grid { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:560px){ .grid { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; }
+  .card h3 { font-size:16px; margin:0 0 8px; }
+  .card p { margin:0; color:var(--muted); font-size:14px; }
+  .card .ico { width:40px; height:40px; border-radius:10px; background:var(--brand-soft);
+    display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px; }
+
+  /* preview screenshots */
+  .shot { max-width:880px; margin:0 auto 22px; }
+  .shot .frame { border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    background:#fff; box-shadow:0 10px 30px rgba(15,23,42,.08); }
+  .shot .bar { height:30px; background:#f1f3f6; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:6px; padding:0 12px; }
+  .shot .bar i { width:9px; height:9px; border-radius:50%; display:block; background:#d8dde5; }
+  .shot .bar span { margin-left:8px; font-size:11px; color:#9aa3b0; }
+  .shot img { display:block; width:100%; height:auto; }
+  .shot figcaption { text-align:center; color:var(--muted); font-size:13px; margin-top:10px; }
+
+  /* steps */
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; counter-reset:step; }
+  @media (max-width:860px){ .steps { grid-template-columns:1fr; } }
+  .step { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; position:relative; }
+  .step .num { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#2bd9f0,#0b7285);
+    color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .step h3 { font-size:16px; margin:0 0 8px; }
+  .step p { margin:0; color:var(--muted); font-size:14px; }
+
+  /* permissions */
+  .scope-list { max-width:720px; margin:0 auto; }
+  .scope { display:flex; gap:16px; background:var(--card); border:1px solid var(--line);
+    border-radius:12px; padding:18px 22px; margin-bottom:12px; align-items:flex-start; }
+  .scope code { background:#0f172a; color:#7dd3fc; border-radius:6px; padding:2px 10px; font-size:13px; white-space:nowrap; }
+  .scope p { margin:4px 0 0; color:var(--muted); font-size:14px; }
+
+  /* faq */
+  .faq { max-width:720px; margin:0 auto; }
+  details { background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:16px 22px; margin-bottom:10px; }
+  summary { font-weight:600; cursor:pointer; font-size:15px; }
+  details p { color:var(--muted); font-size:14px; margin:10px 0 0; }
+
+  /* contact */
+  .contact-box { max-width:720px; margin:0 auto; text-align:center; background:var(--card);
+    border:1px solid var(--line); border-radius:14px; padding:36px 28px; }
+  .contact-box p { color:var(--muted); font-size:14px; }
+
+  footer { border-top:1px solid var(--line); padding:28px 0 40px; color:var(--muted); font-size:13px; }
+  footer .cols { display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  footer a { margin-right:16px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a class="logo" href="#"><img src="/assets/icon-64.png" alt="MultiPost Studio logo">MultiPost Studio</a>
+      <div class="links">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#permissions">Permissions</a>
+        <a href="#security">Security</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+        <a class="btn-nav" href="/console">Open console</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="badge">Powered by TikTok Content Posting API</span>
+    <h1>Schedule &amp; publish videos<br>to multiple TikTok accounts</h1>
+    <p class="sub">MultiPost Studio is a web-based tool for creator teams and agencies:
+       connect several TikTok accounts through official OAuth authorization,
+       upload a video once, and publish it to the right accounts at the right time.</p>
+    <div class="cta">
+      <a class="btn primary" href="/console">Open the console</a>
+      <a class="btn ghost" href="#how">See how it works</a>
+    </div>
+    <div class="meta">
+      <span>✓ Official TikTok API</span><span>✓ Minute-level scheduling</span><span>✓ Revoke access anytime</span>
+    </div>
+  </div>
+</div>
+
+<section id="preview">
+  <div class="wrap">
+    <h2>A look at the console</h2>
+    <p class="lead">The dashboard is a working web application — the screenshots below are the real
+       screens used to connect accounts and schedule posts.</p>
+
+    <figure class="shot">
+      <div class="frame">
+        <div class="bar"><i></i><i></i><i></i><span>/console</span></div>
+        <img src="/assets/preview-dashboard.png" alt="MultiPost Studio dashboard: connected accounts and the publishing engine">
+      </div>
+      <figcaption>Dashboard — connected accounts, publishing engine and task composer.</figcaption>
+    </figure>
+
+    <figure class="shot">
+      <div class="frame">
+        <div class="bar"><i></i><i></i><i></i><span>/console</span></div>
+        <img src="/assets/preview-schedule.png" alt="Creating a publishing task with scheduled date and time and multiple target accounts">
+      </div>
+      <figcaption>Creating a task — pick target accounts and schedule down to the minute.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="features" class="alt">
+  <div class="wrap">
+    <h2>What MultiPost Studio does</h2>
+    <p class="lead">Everything a small team needs to run several TikTok accounts without
+       logging in and out of devices all day.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">👥</div><h3>Multi-account management</h3>
+        <p>Connect multiple TikTok accounts in one dashboard. Each account is authorized individually through TikTok's official Login Kit.</p></div>
+      <div class="card"><div class="ico">🎬</div><h3>Upload once, publish anywhere</h3>
+        <p>Upload a local video file, add caption and hashtags, then select any combination of connected accounts as publish targets.</p></div>
+      <div class="card"><div class="ico">⏰</div><h3>Minute-level scheduling</h3>
+        <p>Publish immediately or schedule to a specific date and time — accurate to the minute. A built-in queue fires each task automatically.</p></div>
+      <div class="card"><div class="ico">🔀</div><h3>Automatic staggered posting</h3>
+        <p>When publishing to several accounts, tasks are automatically spaced out to respect TikTok's rate limits and keep accounts safe.</p></div>
+      <div class="card"><div class="ico">📊</div><h3>Publish status tracking</h3>
+        <p>Every task shows its live status — queued, uploading, published, or failed — so you always know what went out and when.</p></div>
+      <div class="card"><div class="ico">🔗</div><h3>Product anchoring</h3>
+        <p>Optionally attach a TikTok Shop product link to a video so viewers can go straight from content to product page.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="lead">Three steps from sign-in to published video.</p>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><h3>Connect your TikTok accounts</h3>
+        <p>Click "Authorize account" and sign in with TikTok. You approve the requested scopes once per account and can revoke access at any time from your TikTok settings.</p></div>
+      <div class="step"><div class="num">2</div><h3>Upload a video &amp; set the schedule</h3>
+        <p>Pick a video file, write the caption with hashtags, choose target accounts, and set "Publish now" or an exact date and time.</p></div>
+      <div class="step"><div class="num">3</div><h3>We publish and you track</h3>
+        <p>The scheduler uploads and posts each video through TikTok's official Content Posting API. Follow progress in the task list in real time.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="permissions" class="alt">
+  <div class="wrap">
+    <h2>Permissions we request</h2>
+    <p class="lead">MultiPost Studio only asks for what it needs to publish on your behalf — nothing more.</p>
+    <div class="scope-list">
+      <div class="scope"><code>user.info.basic</code>
+        <div><strong>Basic profile info</strong><p>Reads your display name and avatar so the account is easy to recognize in the dashboard. No private profile data is accessed.</p></div></div>
+      <div class="scope"><code>video.upload</code>
+        <div><strong>Upload videos</strong><p>Uploads your selected video file to TikTok as the first step of the publishing flow.</p></div></div>
+      <div class="scope"><code>video.publish</code>
+        <div><strong>Publish videos</strong><p>Posts the uploaded video to your profile — directly or at your scheduled time, depending on the task you created.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="security">
+  <div class="wrap">
+    <h2>Security &amp; your data</h2>
+    <p class="lead">Built on TikTok's official developer platform.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">🔒</div><h3>Official API only</h3>
+        <p>All publishing goes through TikTok's official Content Posting API with OAuth 2.0 authorization. We never ask for your TikTok password.</p></div>
+      <div class="card"><div class="ico">🗂️</div><h3>Minimal data storage</h3>
+        <p>We store only what the product needs: your account identifiers, authorization tokens, and your scheduled tasks. See our <a href="privacy.html">Privacy Policy</a> for details.</p></div>
+      <div class="card"><div class="ico">🚪</div><h3>Leave anytime</h3>
+        <p>Remove any account from the dashboard in one click, or revoke MultiPost Studio's access from your TikTok account settings at any time.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="alt">
+  <div class="wrap">
+    <h2>Frequently asked questions</h2>
+    <p class="lead">Quick answers about how MultiPost Studio works.</p>
+    <div class="faq">
+      <details open><summary>Do I need to give MultiPost Studio my TikTok password?</summary>
+        <p>No. Accounts are connected through TikTok's official OAuth login. You sign in on TikTok's own page and grant permission there — your password is never seen by MultiPost Studio.</p></details>
+      <details><summary>Can I schedule posts to the minute?</summary>
+        <p>Yes. When creating a task you can pick any future date and time with minute-level precision. The built-in scheduler publishes automatically at that moment.</p></details>
+      <details><summary>How many accounts can I connect?</summary>
+        <p>There is no hard limit in the product. Each account must be authorized individually, and publishing to many accounts in a short window is automatically staggered to respect TikTok's rate limits.</p></details>
+      <details><summary>How do I stop MultiPost Studio from accessing my account?</summary>
+        <p>Remove the account from the dashboard, or go to TikTok → Settings → Security &amp; permissions ("Manage app permissions") and revoke access. Revocation takes effect immediately.</p></details>
+      <details><summary>Where can I read the legal terms?</summary>
+        <p>Our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a> are available from every page footer.</p></details>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-box">
+      <h2 style="text-align:left">Contact us</h2>
+      <p style="text-align:left">Questions about the product, authorizing your account, or removing access?
+         Write to the support address registered in the <strong>Basic Information</strong> section of our
+         app on the <a href="https://developers.tiktok.com/" target="_blank" rel="noopener">TikTok for Developers</a>
+         portal, or use the contact details included in the App Review notes.</p>
+      <p style="text-align:left">Already have an access code? <a href="/console">Open the console</a> to connect
+         an account and publish your first video.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap cols">
+    <div>© 2026 MultiPost Studio. All rights reserved.</div>
+    <div>
+      <a href="/console">Console</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
